@@ -1,4 +1,4 @@
-import React, { lazy, Suspense, useEffect, useRef, useState } from "react";
+import React, { lazy, Suspense, useEffect, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCalendarDays } from "@fortawesome/free-solid-svg-icons";
@@ -8,6 +8,7 @@ import {
   setOpenCalendar,
   toggleOpenCalendar,
 } from "../redux/calendarSlice";
+import { validateDate, handleFocus } from "../utils/datepicker";
 
 const Calendar = lazy(() => import("./Calendar"));
 const DatePickerInput = lazy(() => import("./DatePickerInput"));
@@ -15,76 +16,27 @@ const Loading = lazy(() => import("./Loading"));
 
 const DatePicker = () => {
   const dispatch = useDispatch();
-  const { openCalendar } = useSelector((state) => state.calendar);
+  const { openCalendar, selectedDate } = useSelector((state) => state.calendar);
   const today = new Date();
-  const [year, setYear] = useState(today.getFullYear().toString());
-  const [month, setMonth] = useState(
-    (today.getMonth() + 1).toString().padStart(2, "0"),
-  );
-  const [day, setDay] = useState(today.getDate().toString().padStart(2, "0"));
-  const [error, setError] = useState("");
+
+  // Extract year, month, and day from the selected date
+  const year = selectedDate
+    ? new Date(selectedDate).getFullYear().toString()
+    : today.getFullYear().toString();
+  const month = selectedDate
+    ? (new Date(selectedDate).getMonth() + 1).toString().padStart(2, "0")
+    : (today.getMonth() + 1).toString().padStart(2, "0");
+  const day = selectedDate
+    ? new Date(selectedDate).getDate().toString().padStart(2, "0")
+    : today.getDate().toString().padStart(2, "0");
+
+  const [error, setError] = React.useState("");
   const datepickerRef = useRef(null);
   const inputRefs = useRef({
     yearRef: React.createRef(),
     monthRef: React.createRef(),
     dayRef: React.createRef(),
   });
-
-  // Validate the date and ensure it is correct
-  const validateDate = (year, month, day) => {
-    const monthNum = parseInt(month, 10);
-    const dayNum = parseInt(day, 10);
-    const yearNum = parseInt(year, 10);
-
-    if (monthNum < 1 || monthNum > 12) {
-      return "Month must be between 01 and 12.";
-    }
-
-    const maxDaysInMonth = new Date(yearNum, monthNum, 0).getDate();
-    if (dayNum < 1 || dayNum > maxDaysInMonth) {
-      return `Day must be between 01 and ${maxDaysInMonth}.`;
-    }
-
-    return "";
-  };
-
-  // Handle changes to input fields and update state accordingly
-  const handleChange = (setter, maxLength) => (e) => {
-    const newChar = e.target.value.slice(-1);
-    const key = e.nativeEvent.data;
-
-    if (key === null) {
-      setter((prev) => "0" + prev.slice(0, -1));
-    } else if (/^\d$/.test(newChar)) {
-      setter((prev) => prev.slice(1) + newChar);
-    }
-  };
-
-  // Handle focus on input fields and open the calendar
-  const handleFocus = (e) => {
-    e.preventDefault();
-    dispatch(setOpenCalendar(true));
-  };
-
-  // Handle key down events for input fields and close the calendar on Enter or Tab
-  const handleKeyDown = (setter) => (e) => {
-    if (
-      e.nativeEvent.keyCode === 13 ||
-      e.nativeEvent.keyCode === 9 ||
-      e.key === "Enter" ||
-      e.key === "Tab"
-    ) {
-      dispatch(setOpenCalendar(false));
-    }
-  };
-
-  // Handle blur event and determine if the calendar should remain open
-  const handleBlur = () => {
-    const isAnyFocused = Object.values(inputRefs.current).some(
-      (ref) => ref.current === document.activeElement,
-    );
-    dispatch(setOpenCalendar(isAnyFocused));
-  };
 
   // Effect to validate date and update Redux store when date changes
   useEffect(() => {
@@ -100,29 +52,11 @@ const DatePicker = () => {
     if (!isNaN(newDate)) {
       dispatch(setSelectedDate(newDate.toISOString()));
     }
-  }, [year, month, day]);
-
-  // Effect to handle clicks outside the datepicker and close the calendar
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (
-        datepickerRef.current &&
-        !datepickerRef.current.contains(event.target)
-      ) {
-        dispatch(setOpenCalendar(false));
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [dispatch]);
+  }, [year, month, day, dispatch]);
 
   return (
     <Suspense fallback={<Loading />}>
-      {/* Display validation error */}
+      {/* Error Message */}
       <div className="text-red-1">&nbsp;{error}&nbsp;</div>
 
       {/* Date Picker */}
@@ -142,26 +76,29 @@ const DatePicker = () => {
         }}
         ref={datepickerRef}
       >
-        {/* Button to toggle calendar visibility */}
         <button
           type="button"
           title="toggle calendar"
-          onClick={(e) => {
-            e.stopPropagation();
+          onClick={(event) => {
+            event.stopPropagation();
             dispatch(toggleOpenCalendar());
           }}
           className="relative z-10"
         >
-          <FontAwesomeIcon icon={faCalendarDays} className="text-blue mr-1" />
+          <FontAwesomeIcon icon={faCalendarDays} className="mr-1 text-blue" />
         </button>
 
-        {/* Input fields for year, month, and day */}
+        {/* Date Picker Input Fields */}
         <DatePickerInput
           value={year}
-          onChange={handleChange(setYear, 5)}
-          onKeyDown={handleKeyDown(setYear)}
-          onFocus={(e) => handleFocus(e)}
-          onBlur={handleBlur}
+          onChange={() =>
+            dispatch(
+              setSelectedDate(
+                new Date(`${e.target.value}-${month}-${day}`).toISOString(),
+              ),
+            )
+          }
+          onFocus={(event) => handleFocus(event, dispatch)}
           maxLength={5}
           title="YYYY"
           ref={inputRefs.current.yearRef}
@@ -169,10 +106,14 @@ const DatePicker = () => {
         <span>-</span>
         <DatePickerInput
           value={month}
-          onChange={handleChange(setMonth, 3)}
-          onKeyDown={handleKeyDown(setMonth)}
-          onFocus={(e) => handleFocus(e)}
-          onBlur={handleBlur}
+          onChange={(e) =>
+            dispatch(
+              setSelectedDate(
+                new Date(`${year}-${e.target.value}-${day}`).toISOString(),
+              ),
+            )
+          }
+          onFocus={(event) => handleFocus(event, dispatch)}
           maxLength={3}
           title="MM"
           ref={inputRefs.current.monthRef}
@@ -180,14 +121,20 @@ const DatePicker = () => {
         <span>-</span>
         <DatePickerInput
           value={day}
-          onChange={handleChange(setDay, 3)}
-          onKeyDown={handleKeyDown(setDay)}
-          onFocus={(e) => handleFocus(e)}
-          onBlur={handleBlur}
+          onChange={(e) =>
+            dispatch(
+              setSelectedDate(
+                new Date(`${year}-${month}-${e.target.value}`).toISOString(),
+              ),
+            )
+          }
+          onFocus={(event) => handleFocus(event, dispatch)}
           maxLength={3}
           title="DD"
           ref={inputRefs.current.dayRef}
         />
+
+        {/* Calendar */}
         <Calendar />
       </div>
     </Suspense>

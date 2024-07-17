@@ -2,14 +2,13 @@ import React, { forwardRef } from "react";
 import classNames from "classnames";
 
 const DatePickerInput = forwardRef(
-  ({ value, onChange, onKeyDown, onFocus, onBlur, maxLength, title }, ref) => (
+  ({ value, onChange, onKeyDown, onFocus, maxLength, title }, ref) => (
     <input
       type="text"
       value={value}
       onChange={onChange}
       onFocus={onFocus}
       onKeyDown={onKeyDown}
-      onBlur={onBlur}
       maxLength={maxLength}
       title={title}
       className={classNames(

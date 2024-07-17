@@ -24,12 +24,12 @@
   }
 
   .day {
-    @apply h-11 w-11;
+    @apply h-9 w-9 sm:h-11 sm:w-11;
   }
 
   .month,
   .year {
-    @apply h-16 w-16;
+    @apply h-14 w-14 sm:h-16 sm:w-16;
   }
 
   .date-picker-input {

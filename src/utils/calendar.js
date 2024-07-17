@@ -2,6 +2,7 @@ import {
   setCurrentDate,
   setSelectedDate,
   setView,
+  setOpenCalendar,
 } from "../redux/calendarSlice";
 
 /**
@@ -56,6 +57,7 @@ export const handleDateClick = (day, currentDate, dispatch) => {
     const newDate = new Date(current.getFullYear(), current.getMonth(), day);
     dispatch(setSelectedDate(newDate.toISOString()));
     dispatch(setView("date"));
+    dispatch(setOpenCalendar(false));
   }
 };
 
