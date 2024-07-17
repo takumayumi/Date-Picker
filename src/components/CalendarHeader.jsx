@@ -2,28 +2,39 @@ import React from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronLeft } from "@fortawesome/free-solid-svg-icons";
+import classNames from "classnames";
 import { setView } from "../redux/calendarSlice";
-import { handleMonthChange, handleYearChange } from "../utils/calendar";
+import { handleYearChange, handleYearsChange } from "../utils/calendar";
+import { getYears } from "../utils/years";
 
 const CalendarHeader = () => {
   const dispatch = useDispatch();
   const { currentDate, view } = useSelector((state) => state.calendar);
   const current = new Date(currentDate);
+  const years = getYears(currentDate);
 
   const handlePrevClick = () => {
-    if (view === "month") {
-      handleYearChange(-1, current, dispatch);
+    if (view === "day") {
+      handleMonthChange(-1, currentDate, dispatch);
+    } else if (view === "month") {
+      handleYearChange(-1, currentDate, dispatch);
     } else {
-      handleMonthChange(-1, current, dispatch);
+      handleYearsChange(-10, currentDate, dispatch);
     }
   };
 
   const handleNextClick = () => {
-    if (view === "month") {
-      handleYearChange(1, current, dispatch);
+    if (view === "day") {
+      handleMonthChange(1, currentDate, dispatch);
+    } else if (view === "month") {
+      handleYearChange(1, currentDate, dispatch);
     } else {
-      handleMonthChange(1, current, dispatch);
+      handleYearsChange(10, currentDate, dispatch);
     }
+  };
+
+  const handleMidClick = () => {
+    dispatch(setView(view === "date" ? "month" : "year"));
   };
 
   return (
@@ -37,15 +48,20 @@ const CalendarHeader = () => {
         <FontAwesomeIcon icon={faChevronLeft} />
       </button>
       <button
-        className="btn-calhead flex-1"
-        onClick={() => dispatch(setView(view === "date" ? "month" : "year"))}
+        className={classNames(
+          "btn-calhead flex-1",
+          view === "year" ? "pointer-events-none" : "",
+        )}
+        onClick={handleMidClick}
       >
-        {view === "month"
-          ? current.toLocaleString("default", { year: "numeric" })
-          : current.toLocaleString("default", {
+        {view === "date"
+          ? current.toLocaleString("default", {
               month: "long",
               year: "numeric",
-            })}
+            })
+          : view === "month"
+            ? current.toLocaleString("default", { year: "numeric" })
+            : `${years[1]} - ${years[10]}`}
       </button>
       <button className="btn-calhead" onClick={handleNextClick}>
         <FontAwesomeIcon icon={faChevronLeft} className="rotate-180" />

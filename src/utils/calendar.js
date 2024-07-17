@@ -31,6 +31,19 @@ export const handleYearChange = (direction, currentDate, dispatch) => {
 };
 
 /**
+ * Handles year change event and updates the current date.
+ *
+ * @param {number} direction - The direction to change the year (-1 for previous year, 1 for next year).
+ * @param {string} currentDate - The current date object.
+ * @param {Function} dispatch - Redux dispatch function.
+ */
+export const handleYearsChange = (direction, currentDate, dispatch) => {
+  const newDate = new Date(currentDate);
+  newDate.setFullYear(newDate.getFullYear() + direction);
+  dispatch(setCurrentDate(newDate.toISOString()));
+};
+
+/**
  * Handles date click event and updates the selected date and view.
  *
  * @param {number} day - The day of the month to select.

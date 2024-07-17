@@ -6,18 +6,18 @@ import { getYears, isYearSelected, isYearToday } from "../utils/years";
 
 const Years = ({ onYearClick }) => {
   const { currentDate, selectedDate } = useSelector((state) => state.calendar);
-  const selected = new Date(selectedDate);
-  const years = getYears(new Date(currentDate));
+  const years = getYears(currentDate);
 
   return (
     <>
-      {years.map((year) => (
+      {years.map((year, index) => (
         <div
           key={nanoid()}
           className={classNames(
             "date year",
-            isYearSelected(selected, year) ? "selected" : "",
+            isYearSelected(year, selectedDate) ? "selected" : "",
             isYearToday(year) ? "today" : "",
+            index === 0 || index === years.length - 1 ? "disabled" : "",
           )}
           onClick={() => onYearClick(year)}
         >
