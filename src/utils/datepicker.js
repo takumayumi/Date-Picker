@@ -26,6 +26,35 @@ export const validateDate = (year, month, day) => {
 };
 
 /**
+ * Handles input changes and updates the state accordingly.
+ *
+ * @param {Function} setter - The state setter function to update the value.
+ * @returns {Function} - The change event handler.
+ */
+export const handleChange = (setter) => (event) => {
+  const newChar = event.target.value.slice(-1);
+  const key = event.nativeEvent.data;
+
+  if (key === null) {
+    setter((prev) => "0" + prev.slice(0, -1));
+  } else if (/^\d$/.test(newChar)) {
+    setter((prev) => prev.slice(1) + newChar);
+  }
+};
+
+/**
+ * Handles key down events for input fields, closing the calendar on Enter or Tab.
+ *
+ * @param {Function} dispatch - The dispatch function from Redux.
+ * @returns {Function} - The key down event handler.
+ */
+export const handleKeyDown = (dispatch) => (event) => {
+  if (event.key === "Enter" || event.key === "Tab") {
+    dispatch(setOpenCalendar(false));
+  }
+};
+
+/**
  * Handles focus event to open the calendar.
  *
  * @param {object} event - The focus event.

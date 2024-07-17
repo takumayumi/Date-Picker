@@ -9,7 +9,12 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "",
+  "description": "A simple date picker component. Live demo: https://wareki.netlify.app/",
+  "homepage": "https://github.com/takumayumi/date-picker",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/takumayumi/date-picker.git"
+  },
   "devDependencies": {
     "@babel/core": "^7.24.9",
     "@babel/plugin-syntax-jsx": "^7.24.7",

@@ -1,4 +1,4 @@
-import React, { lazy, Suspense, useEffect, useRef } from "react";
+import React, { lazy, Suspense, useEffect, useRef, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCalendarDays } from "@fortawesome/free-solid-svg-icons";
@@ -8,7 +8,12 @@ import {
   setOpenCalendar,
   toggleOpenCalendar,
 } from "../redux/calendarSlice";
-import { validateDate, handleFocus } from "../utils/datepicker";
+import {
+  validateDate,
+  handleChange,
+  handleKeyDown,
+  handleFocus,
+} from "../utils/datepicker";
 
 const Calendar = lazy(() => import("./Calendar"));
 const DatePickerInput = lazy(() => import("./DatePickerInput"));
@@ -18,17 +23,11 @@ const DatePicker = () => {
   const dispatch = useDispatch();
   const { openCalendar, selectedDate } = useSelector((state) => state.calendar);
   const today = new Date();
-
-  // Extract year, month, and day from the selected date
-  const year = selectedDate
-    ? new Date(selectedDate).getFullYear().toString()
-    : today.getFullYear().toString();
-  const month = selectedDate
-    ? (new Date(selectedDate).getMonth() + 1).toString().padStart(2, "0")
-    : (today.getMonth() + 1).toString().padStart(2, "0");
-  const day = selectedDate
-    ? new Date(selectedDate).getDate().toString().padStart(2, "0")
-    : today.getDate().toString().padStart(2, "0");
+  const [year, setYear] = useState(today.getFullYear().toString());
+  const [month, setMonth] = useState(
+    (today.getMonth() + 1).toString().padStart(2, "0"),
+  );
+  const [day, setDay] = useState(today.getDate().toString().padStart(2, "0"));
 
   const [error, setError] = React.useState("");
   const datepickerRef = useRef(null);
@@ -43,16 +42,21 @@ const DatePicker = () => {
     const validationError = validateDate(year, month, day);
     setError(validationError);
 
-    const newDate = new Date(
-      parseInt(year),
-      parseInt(month) - 1,
-      parseInt(day),
-    );
-
-    if (!isNaN(newDate)) {
+    // Update selected date only if all fields are filled
+    const newDate = new Date(`${year}-${month}-${day}`);
+    if (!!!validationError && !isNaN(newDate)) {
       dispatch(setSelectedDate(newDate.toISOString()));
     }
   }, [year, month, day, dispatch]);
+
+  // Update year, month, and day based on selectedDate or current date
+  useEffect(() => {
+    const selected = selectedDate ? new Date(selectedDate) : new Date();
+
+    setYear(selected.getFullYear().toString());
+    setMonth((selected.getMonth() + 1).toString().padStart(2, "0"));
+    setDay(selected.getDate().toString().padStart(2, "0"));
+  }, [selectedDate]);
 
   return (
     <Suspense fallback={<Loading />}>
@@ -91,13 +95,8 @@ const DatePicker = () => {
         {/* Date Picker Input Fields */}
         <DatePickerInput
           value={year}
-          onChange={() =>
-            dispatch(
-              setSelectedDate(
-                new Date(`${e.target.value}-${month}-${day}`).toISOString(),
-              ),
-            )
-          }
+          onChange={handleChange(setYear, 5)}
+          onKeyDown={handleKeyDown(dispatch)}
           onFocus={(event) => handleFocus(event, dispatch)}
           maxLength={5}
           title="YYYY"
@@ -106,13 +105,8 @@ const DatePicker = () => {
         <span>-</span>
         <DatePickerInput
           value={month}
-          onChange={(e) =>
-            dispatch(
-              setSelectedDate(
-                new Date(`${year}-${e.target.value}-${day}`).toISOString(),
-              ),
-            )
-          }
+          onChange={handleChange(setMonth, 3)}
+          onKeyDown={handleKeyDown(dispatch)}
           onFocus={(event) => handleFocus(event, dispatch)}
           maxLength={3}
           title="MM"
@@ -121,13 +115,8 @@ const DatePicker = () => {
         <span>-</span>
         <DatePickerInput
           value={day}
-          onChange={(e) =>
-            dispatch(
-              setSelectedDate(
-                new Date(`${year}-${month}-${e.target.value}`).toISOString(),
-              ),
-            )
-          }
+          onChange={handleChange(setDay, 3)}
+          onKeyDown={handleKeyDown(dispatch)}
           onFocus={(event) => handleFocus(event, dispatch)}
           maxLength={3}
           title="DD"
