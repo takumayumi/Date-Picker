@@ -74,7 +74,6 @@ The application uses a simple algorithm to calculate the day of the week and dis
 - **Babel**: Transforms modern JavaScript and JSX into backward-compatible code for broader browser support.
 - **Tailwind CSS**: Allows rapid styling with utility classes, promoting consistency and responsive design.
 - **Redux**: Manages application state globally, facilitating predictable state management and easier debugging.
-- **Jest**: A delightful JavaScript testing framework with a focus on simplicity.
 - **Prettier**: An opinionated code formatter that enforces consistent style across your codebase.
 - **Font Awesome**: Provides a vast library of icons, enhancing UI aesthetics and functionality.
 - **classnames**: A utility for conditionally joining class names together, simplifying dynamic class management.

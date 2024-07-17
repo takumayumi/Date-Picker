@@ -4,7 +4,7 @@
 
 @layer components {
   .btn-calhead {
-    @apply flex h-10 w-10 items-center justify-center rounded-sm transition-colors duration-200 ease-in hover:bg-gray-1;
+    @apply flex h-10 w-10 items-center justify-center rounded-sm transition-colors duration-200 ease-in hover:bg-gray-1 focus:outline-none;
   }
 
   .date {
@@ -30,5 +30,9 @@
   .month,
   .year {
     @apply h-16 w-16;
+  }
+
+  .date-picker-input {
+    @apply focus:bg-blue-1 w-auto border-0 text-center caret-transparent selection:bg-transparent focus:outline-none;
   }
 }

@@ -14,6 +14,7 @@ const Months = ({ onMonthClick }) => {
 
   return (
     <>
+      {/* Render list of months */}
       {months.map((month) => (
         <div
           key={nanoid()}

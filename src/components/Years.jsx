@@ -10,6 +10,7 @@ const Years = ({ onYearClick }) => {
 
   return (
     <>
+      {/* Render list of years (per decade) */}
       {years.map((year, index) => (
         <div
           key={nanoid()}
