@@ -42,7 +42,7 @@ module.exports = {
           "style-loader",
           "css-loader",
           "postcss-loader",
-          MiniCssExtractPlugin.loader,
+          // MiniCssExtractPlugin.loader,
         ],
       },
       {
