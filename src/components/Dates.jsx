@@ -16,22 +16,20 @@ const Dates = ({ onDateClick }) => {
           {day}
         </div>
       ))}
-      {days.map((day) => {
-        return (
-          <div
-            key={nanoid()}
-            className={classNames(
-              "date day",
-              day ? "" : "disabled",
-              isDaySelected(day, currentDate, selectedDate) ? "selected" : "",
-              isDayToday(day, currentDate) ? "today" : "",
-            )}
-            onClick={() => onDateClick(day)}
-          >
-            {day}
-          </div>
-        );
-      })}
+      {days.map(({ day, currentMonth }) => (
+        <div
+          key={nanoid()}
+          className={classNames(
+            "date day",
+            currentMonth ? "" : "disabled",
+            isDaySelected(day, currentDate, selectedDate) ? "selected" : "",
+            isDayToday(day, currentDate) ? "today" : "",
+          )}
+          onClick={currentMonth ? () => onDateClick(day) : null}
+        >
+          {day}
+        </div>
+      ))}
     </>
   );
 };

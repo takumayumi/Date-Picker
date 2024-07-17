@@ -49,20 +49,45 @@ export const getStartDay = (currentDate) => {
 };
 
 /**
- * Gets an array of days for the specified month and year.
+ * Gets an array of days for the specified month and year, including days from the previous and next months to fill the grid.
  *
  * @param {string} currentDate - The date to determine the month and year.
- * @returns {Array} - An array of days for the month, with nulls for empty slots.
+ * @returns {Array} - An array of objects for each day in the grid.
  */
 export const getDays = (currentDate) => {
   const current = new Date(currentDate);
   const daysInMonth = getTotalDays(current);
   const startDay = getStartDay(current);
 
-  const days = Array.from({ length: 42 }, (_, i) => {
-    const day = i - startDay + 1;
-    return day > 0 && day <= daysInMonth ? day : null;
-  });
+  // Get the last day of the previous month
+  const prevMonth = new Date(current.getFullYear(), current.getMonth(), 0);
+  const daysInPrevMonth = prevMonth.getDate();
+
+  const days = [];
+  // Fill in days from the previous month
+  for (let i = startDay - 1; i >= 0; i--) {
+    days.push({
+      day: daysInPrevMonth - i,
+      currentMonth: false,
+    });
+  }
+
+  // Fill in days from the current month
+  for (let i = 1; i <= daysInMonth; i++) {
+    days.push({
+      day: i,
+      currentMonth: true,
+    });
+  }
+
+  // Fill in days from the next month
+  const remainingSlots = 42 - days.length;
+  for (let i = 1; i <= remainingSlots; i++) {
+    days.push({
+      day: i,
+      currentMonth: false,
+    });
+  }
 
   return days;
 };

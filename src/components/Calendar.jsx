@@ -15,10 +15,10 @@ const Calendar = () => {
   const { currentDate, view } = useSelector((state) => state.calendar);
 
   return (
-    <div className="bg-white-1 border-gray border-2 border-black/50">
+    <div className="border-2 border-black/50 border-gray bg-white-1">
       <CalendarHeader />
       <div
-        className={`grid p-5 pt-2.5 ${view === "date" ? "grid-cols-7 gap-2.5" : "grid-cols-4 gap-5"}`}
+        className={`grid p-5 pt-2.5 ${view === "date" ? "grid-cols-7 gap-2.5" : "grid-cols-4 gap-8 pb-12"}`}
       >
         {view === "date" && (
           <Dates
