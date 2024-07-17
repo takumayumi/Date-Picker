@@ -69,6 +69,8 @@ const CalendarHeader = () => {
           view === "year" ? "pointer-events-none" : "",
         )}
         onClick={handleMidClick}
+        title="header button"
+        type="button"
       >
         {view === "date"
           ? current.toLocaleString("default", {
@@ -81,7 +83,12 @@ const CalendarHeader = () => {
       </button>
 
       {/* Next button */}
-      <button className="btn-calhead" onClick={handleNextClick}>
+      <button
+        className="btn-calhead"
+        onClick={handleNextClick}
+        title="next button"
+        type="button"
+      >
         <FontAwesomeIcon icon={faChevronLeft} className="rotate-180" />
       </button>
     </div>

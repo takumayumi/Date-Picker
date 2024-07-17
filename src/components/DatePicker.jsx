@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { lazy, Suspense, useEffect, useRef, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCalendarDays } from "@fortawesome/free-solid-svg-icons";
@@ -8,8 +8,10 @@ import {
   setOpenCalendar,
   toggleOpenCalendar,
 } from "../redux/calendarSlice";
-import DatePickerInput from "./DatePickerInput";
-import Calendar from "./Calendar";
+
+const Calendar = lazy(() => import("./Calendar"));
+const DatePickerInput = lazy(() => import("./DatePickerInput"));
+const Loading = lazy(() => import("./Loading"));
 
 const DatePicker = () => {
   const dispatch = useDispatch();
@@ -119,7 +121,7 @@ const DatePicker = () => {
   }, [dispatch]);
 
   return (
-    <>
+    <Suspense fallback={<Loading />}>
       {/* Display validation error */}
       <div className="text-red-1">&nbsp;{error}&nbsp;</div>
 
@@ -188,7 +190,7 @@ const DatePicker = () => {
         />
         <Calendar />
       </div>
-    </>
+    </Suspense>
   );
 };
 
