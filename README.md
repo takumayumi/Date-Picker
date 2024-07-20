@@ -22,7 +22,7 @@ Find the source code on GitHub at [this link](https://github.com/takumayumi/date
 1. After unzipping the downloaded files and open the terminal in the project directory:
 
    ```bash
-   cd calendar
+   cd date-picker
    ```
 
 2. Install dependencies:
