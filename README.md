@@ -22,7 +22,7 @@ This is a simple date picker application built with React and Webpack from scrat
 - **Font Awesome**: Provides a vast library of icons, enhancing UI aesthetics and functionality.
 - **classnames**: A utility for conditionally joining class names together, simplifying dynamic class management.
 
-## Installation
+## Getting Started
 
 1. After unzipping the downloaded files and open the terminal in the project directory:
 
@@ -45,7 +45,3 @@ This is a simple date picker application built with React and Webpack from scrat
    ```
 
 2. Open your browser and navigate to http://localhost:3000 to see the application in action.
-
-## Contact
-
-For any questions or feedback, please open an issue on this repository.
