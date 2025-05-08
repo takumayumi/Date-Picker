@@ -36,12 +36,10 @@ This is a simple date picker application built with React and Webpack from scrat
    npm i
    ```
 
-### Usage
-
-1. To start the development server, run:
+3. To start the development server, run:
 
    ```bash
    npm start
    ```
 
-2. Open your browser and navigate to http://localhost:3000 to see the application in action.
+4. Open your browser and navigate to http://localhost:3000 to see the application in action.
